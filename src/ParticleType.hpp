@@ -6,14 +6,16 @@ namespace kape
     class ParticleType
     {
     public:
-        ParticleType();
         ParticleType(const char *name, double mass, int charge);
+        ParticleType();
+        virtual ~ParticleType();
 
         const char *GetName() const;
         double GetMass() const;
         int GetCharge() const;
 
-        void Print() const;
+        virtual void Print() const;
+
 
     private:
         const char *fName;

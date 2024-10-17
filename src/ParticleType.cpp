@@ -20,6 +20,8 @@ namespace kape
     ParticleType::ParticleType()
         : ParticleType("", 1, 0) {}
 
+    ParticleType::~ParticleType(){}
+
     const char *ParticleType::GetName() const
     {
         return fName;
