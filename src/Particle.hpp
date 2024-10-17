@@ -10,7 +10,7 @@ class Particle
 {
  public:
   static int GetNParticleType();
-  static void AddParticleType(const char* name, double mass, int charge,
+  static void AddParticleType( const char* name, double mass, int charge,
                               double width = 0);
   static void PrintParticleType();
 
@@ -29,7 +29,7 @@ class Particle
   void Print() const;
 
  private:
-  static std::vector<ParticleType*> fParticleType;
+  static inline std::vector<ParticleType*> fParticleType{};
   static int FindParticle(const char* name);
 
   int fIndex;

@@ -7,7 +7,7 @@
 namespace kape {
 int Particle::GetNParticleType()
 {
-  return fParticleType.size();
+  return static_cast<int>(fParticleType.size());
 }
 
 Particle::Particle(const char* name, double px, double py, double pz)
