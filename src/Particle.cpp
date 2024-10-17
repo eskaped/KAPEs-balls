@@ -1,4 +1,5 @@
 #include "Particle.hpp"
+#include <cmath>
 #include <cstring> //strcmp
 #include <iostream>
 #include <stdexcept>
@@ -45,11 +46,35 @@ void Particle::AddParticleType(const char* name, double mass, int charge,
   }
 }
 
+void Particle::PrintParticleType()
+{
+  std::cout << "Particle types:\n";
+  for (auto const& p : fParticleType) {
+    p->Print();
+  }
+}
+
 int Particle::GetIndex() const
 {
   return fIndex;
 }
+double Particle::GetPx() const
+{
+  return fPx;
+}
+double Particle::GetPy() const
+{
+  return fPy;
+}
+double Particle::GetPz() const
+{
+  return fPz;
+}
 
+double Particle::GetMass() const
+{
+  return fParticleType[fIndex]->GetMass();
+}
 void Particle::SetIndex(int index)
 {
   if (index >= GetNParticleType() || index < 0) {
@@ -62,6 +87,33 @@ void Particle::SetIndex(int index)
 void Particle::SetIndex(const char* name)
 {
   SetIndex(FindParticle(name));
+}
+
+void Particle::SetP(double px, double py, double pz)
+{
+  fPx = px;
+  fPy = py;
+  fPz = pz;
+}
+
+double Particle::CalculateE() const
+{
+  double m{fParticleType[fIndex]->GetMass()};
+  return std::sqrt(m * m + fPx * fPx + fPy * fPy + fPz * fPz);
+}
+
+double Particle::InvMass(Particle const& p) const
+{
+  return sqrt(std::pow(CalculateE() + p.CalculateE(), 2)
+              - (std::pow(fPx + p.fPx, 2) + std::pow(fPy + p.fPy, 2)
+                 + std::pow(fPz + p.fPz, 2)));
+}
+
+void Particle::Print() const
+{
+  std::cout << "Index: " << fIndex << '\n';
+  std::cout << "Name: " << fParticleType[fIndex]->GetName() << '\n';
+  std::cout << "P = (" << fPx << ", " << fPy << ", " << fPz << ") " << '\n';
 }
 
 int Particle::FindParticle(const char* name)
