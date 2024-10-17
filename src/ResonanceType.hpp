@@ -1,20 +1,20 @@
 #ifndef RESONANCE_TYPE_HPP
 #define RESONANCE_TYPE_HPP
 #include "ParticleType.hpp"
-namespace kape
+namespace kape {
+class ResonanceType : public ParticleType
 {
-    class ResonanceType : public ParticleType
-    {
-    public:
-    ResonanceType(const char *name, double mass, int charge, double width);
-    ResonanceType(); 
-    
-    double GetWidth() const;
-    void Print() const override;
+ public:
+  explicit ResonanceType(const char* name, double mass, int charge,
+                         double width);
+  explicit ResonanceType();
 
-    private:
-    const double fWidth;
-    };
-}
+  double GetWidth() const;
+  void Print() const override;
+
+ private:
+  const double fWidth;
+};
+} // namespace kape
 
 #endif
