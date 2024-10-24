@@ -18,7 +18,8 @@ Particle::Particle(const char* name, double px, double py, double pz)
 {
   fIndex = FindParticle(name);
   // not found
-  if (fIndex == static_cast<int>(fParticleType.size())) {
+  if (fIndex == static_cast<int>(fParticleType.size())
+      && name != DEFAULT_NAME) {
     std::cout << name << " is not a defined type of particle\n";
     throw std::runtime_error{"it is not a defined type of particle. Check "
                              "terminal output for the name."};
@@ -184,7 +185,7 @@ void Particle::Print() const
 int Particle::FindParticle(const char* name)
 {
   int i{0};
-  for (; i !=static_cast<int>( fParticleType.size()); ++i) {
+  for (; i != static_cast<int>(fParticleType.size()); ++i) {
     if (std::strcmp(fParticleType[i]->GetName(), name) == 0) {
       break;
     }
