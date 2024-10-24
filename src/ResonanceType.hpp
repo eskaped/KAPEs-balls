@@ -9,7 +9,7 @@ class ResonanceType : public ParticleType
                          double width);
   explicit ResonanceType();
 
-  double GetWidth() const;
+  virtual double GetWidth() const override;
   void Print() const override;
 
  private:

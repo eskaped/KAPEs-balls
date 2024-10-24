@@ -38,6 +38,12 @@ int ParticleType::GetCharge() const
   return fCharge;
 }
 
+double ParticleType::GetWidth() const
+{
+  return 0.;
+}
+
+
 void ParticleType::Print() const
 {
   std::cout << "Name:\t" << fName << '\n';
