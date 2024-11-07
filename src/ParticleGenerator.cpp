@@ -33,11 +33,11 @@ void kapef()
 
   TH1F* hParticleTypes =
       new TH1F("hParticleTypes", "Generated particle types", 7, -0.5, 6.5);
-  TH1F* hPhi   = new TH1F("hPhi", "Generated phi angles", 10e5, 0., 2. * M_PI);
-  TH1F* hTheta = new TH1F("hTheta", "Generated theta angles", 10e5, 0., M_PI);
-  TH1F* hP     = new TH1F("hP", "Generated p magnitudes", 10e5, 0., 5.);
+  TH1F* hPhi   = new TH1F("hPhi", "Generated phi angles", 1e5, 0., 2. * M_PI);
+  TH1F* hTheta = new TH1F("hTheta", "Generated theta angles", 1e5, 0., M_PI);
+  TH1F* hP     = new TH1F("hP", "Generated p magnitudes", 1e5, 0., 5.);
   TH1F* hPTrasverse =
-      new TH1F("hPTrasverse", "Generated p trasverses", 10e5, 0., 5.);
+      new TH1F("hPTrasverse", "Generated p trasverses", 1e5, 0., 5.);
   TH1F* hEnergy =
       new TH1F("hEnergy", "Generated particle energies", 1000, 0., 6.);
 
@@ -72,7 +72,7 @@ void kapef()
   hInvariantMassConcordantPiK->Sumw2();
   hInvariantMassDecayed->Sumw2();
 
-  for (int eventIndex = 0; eventIndex != 10e3; ++eventIndex) {
+  for (int eventIndex = 0; eventIndex != 1e5; ++eventIndex) {
     // index for the next free space where decayed particles can be placed
     int arrayEnd = 100;
     for (int arrayIndex = 0; arrayIndex < 100; ++arrayIndex) {

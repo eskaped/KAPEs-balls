@@ -39,6 +39,8 @@ int Particle::Decay2body(Particle& dau1, Particle& dau2) const
   double massDau1 = dau1.GetMass();
   double massDau2 = dau2.GetMass();
 
+
+  std::cout<<"DecayToBody()\n";
   if (fIndex > -1) { // add width effect
 
 
@@ -58,11 +60,21 @@ int Particle::Decay2body(Particle& dau1, Particle& dau2) const
     y1 = x1 * w;
 
     massMot += fParticleType[fIndex]->GetWidth() * y1;
+
+    std::cout<<"x1: "<<x1<<"\n";
+    std::cout<<"x2: "<<x2<<"\n";
+    std::cout<<"w: "<<w<<"\n";
+    std::cout<<"y1: "<<y1<<"\n";
+    std::cout<<"width: "<<fParticleType[fIndex]->GetWidth()<<'\n';
   }
 
 
 
   if (massMot < massDau1 + massDau2) {
+    std::cout<<"massMot: "<<massMot<<'\n';
+    std::cout<<"massDau1: "<<massDau1<<'\n';
+    std::cout<<"massDau2: "<<massDau2<<'\n';
+
     printf("Decayment cannot be preformed because mass is too low in this "
            "channel\n");
     return 2;
