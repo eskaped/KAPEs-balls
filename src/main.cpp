@@ -1,12 +1,9 @@
-R__LOAD_LIBRARY(ParticleType_cpp.so)
-R__LOAD_LIBRARY(Particle_cpp.so)
-R__LOAD_LIBRARY(ResonanceType_cpp.so)
 #include "Particle.hpp"
+#include "TFile.h"
 #include "TH1.h"
 #include "TRandom.h"
 #include <array>
 #include <cmath> //M_PI
-
 enum ParticlesIndexes
 {
   PI_PLUS = 0,
@@ -18,7 +15,7 @@ enum ParticlesIndexes
   K_STAR
 };
 
-int main()
+void palleculo()
 {
   kape::Particle::AddParticleType("pi+", 0.13957, +1);      // pione +
   kape::Particle::AddParticleType("pi-", 0.13957, -1);      // pione -
@@ -62,7 +59,20 @@ int main()
       new TH1F("hInvariantMassDecayed", "Generated decayed invariant masses",
                1000, 0., 12.);
 
-  for (int eventIndex = 0; eventIndex != 10e5; ++eventIndex) {
+  hParticleTypes->Sumw2();
+  hPhi->Sumw2();
+  hTheta->Sumw2();
+  hP->Sumw2();
+  hPTrasverse->Sumw2();
+  hEnergy->Sumw2();
+  hInvariantMass->Sumw2();
+  hInvariantMassDiscordant->Sumw2();
+  hInvariantMassConcordant->Sumw2();
+  hInvariantMassDiscordantPiK->Sumw2();
+  hInvariantMassConcordantPiK->Sumw2();
+  hInvariantMassDecayed->Sumw2();
+
+  for (int eventIndex = 0; eventIndex != 10e1; ++eventIndex) {
     // index for the next free space where decayed particles can be placed
     int arrayEnd = 100;
     for (int arrayIndex = 0; arrayIndex < 100; ++arrayIndex) {
@@ -97,8 +107,22 @@ int main()
         // k*
         eventParticles[arrayIndex].SetIndex(K_STAR);
 
-        eventParticles[arrayIndex].Decay2body(eventParticles[arrayEnd],
-                                              eventParticles[arrayEnd + 1]);
+        // choose decayed particle types randomly
+        if (gRandom->Rndm() <= 0.5) {
+          eventParticles[arrayEnd].SetIndex(PI_PLUS);
+          eventParticles[arrayEnd + 1].SetIndex(K_MINUS);
+        } else {
+          eventParticles[arrayEnd].SetIndex(PI_MINUS);
+          eventParticles[arrayEnd + 1].SetIndex(K_PLUS);
+        }
+
+        if (eventParticles[arrayIndex].Decay2body(eventParticles[arrayEnd],
+                                                  eventParticles[arrayEnd + 1])
+            != 0) {
+          throw std::runtime_error{
+              "decayed to body failed, check terminal for more info.\n"};
+        }
+
         arrayEnd += 2;
       }
 
@@ -113,8 +137,8 @@ int main()
     }
 
     // inv masses between particles
-    for (int i = 0; i != eventParticles.size() - 1; ++i) {
-      for (int j = i + 1; j < eventParticles.size(); ++j) {
+    for (int i = 0; i != arrayEnd - 1; ++i) {
+      for (int j = i + 1; j < arrayEnd; ++j) {
         double invMass = eventParticles[i].InvMass(eventParticles[j]);
         hInvariantMass->Fill(invMass);
         if (eventParticles[i].GetCharge() * eventParticles[j].GetCharge() < 0) {
@@ -142,18 +166,30 @@ int main()
     }
 
     int i = 100;
-    while(i<eventParticles.size())
-    {
-        hInvariantMassDecayed->Fill(eventParticles[i].InvMass(eventParticles[i+1]));
-        i+=2;
+    while (i < arrayEnd) {
+      hInvariantMassDecayed->Fill(
+          eventParticles[i].InvMass(eventParticles[i + 1]));
+      i += 2;
     }
-    
   }
 
-  hParticleTypes->Draw();
-  hPhi->Draw();
-  //   hTheta->Draw();
-  //   hP->Draw();
-  //   hPTrasverse->Draw();
-  //   hEnergy->Draw();
+  hInvariantMassDecayed->Draw();
+
+
+  TFile* file = new TFile("histo.root", "RECREATE");
+
+  hParticleTypes->Write();
+  hPhi->Write();
+  hTheta->Write();
+  hP->Write();
+  hPTrasverse->Write();
+  hEnergy->Write();
+  hInvariantMass->Write();
+  hInvariantMassDiscordant->Write();
+  hInvariantMassConcordant->Write();
+  hInvariantMassDiscordantPiK->Write();
+  hInvariantMassConcordantPiK->Write();
+  hInvariantMassDecayed->Write();
+
+  file->Close();
 }

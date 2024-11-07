@@ -22,6 +22,7 @@ class Particle
   double GetPz() const;
   double GetMass() const;
   double GetEnergy() const;
+  double GetCharge() const;
   void SetIndex(int index);
   void SetIndex(const char* name);
   void SetP(double px, double py, double pz);

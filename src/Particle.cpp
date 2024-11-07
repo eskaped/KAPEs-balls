@@ -28,16 +28,20 @@ Particle::Particle(const char* name, double px, double py, double pz)
 
 int Particle::Decay2body(Particle& dau1, Particle& dau2) const
 {
-  if (GetMass() == 0.0) {
+  if (GetMass() == 0.0)
+   {
     printf("Decayment cannot be preformed if mass is zero\n");
     return 1;
   }
+
 
   double massMot  = GetMass();
   double massDau1 = dau1.GetMass();
   double massDau2 = dau2.GetMass();
 
   if (fIndex > -1) { // add width effect
+
+
 
     // gaussian random numbers
 
@@ -56,11 +60,16 @@ int Particle::Decay2body(Particle& dau1, Particle& dau2) const
     massMot += fParticleType[fIndex]->GetWidth() * y1;
   }
 
+
+
   if (massMot < massDau1 + massDau2) {
     printf("Decayment cannot be preformed because mass is too low in this "
            "channel\n");
     return 2;
   }
+
+
+
 
   double pout =
       sqrt(
@@ -83,8 +92,12 @@ int Particle::Decay2body(Particle& dau1, Particle& dau2) const
   double by = fPy / energy;
   double bz = fPz / energy;
 
+
+
   dau1.Boost(bx, by, bz);
   dau2.Boost(bx, by, bz);
+
+  
 
   return 0;
 }
@@ -140,6 +153,11 @@ double Particle::GetMass() const
 {
   return fParticleType[fIndex]->GetMass();
 }
+double Particle::GetCharge() const
+{
+  return fParticleType[fIndex]->GetCharge();
+}
+
 void Particle::SetIndex(int index)
 {
   if (index >= GetNParticleType() || index < 0) {
