@@ -4,6 +4,7 @@
 #include "TRandom.h"
 #include <array>
 #include <cmath> //M_PI
+#include <iostream>
 enum ParticlesIndexes
 {
   PI_PLUS = 0,
@@ -31,33 +32,19 @@ void kapef()
   // particles
   std::array<kape::Particle, 300> eventParticles;
 
-  TH1F* hParticleTypes =
-      new TH1F("hParticleTypes", "Generated particle types", 7, -0.5, 6.5);
-  TH1F* hPhi   = new TH1F("hPhi", "Generated phi angles", 1e5, 0., 2. * M_PI);
-  TH1F* hTheta = new TH1F("hTheta", "Generated theta angles", 1e5, 0., M_PI);
-  TH1F* hP     = new TH1F("hP", "Generated p magnitudes", 1e5, 0., 5.);
-  TH1F* hPTrasverse =
-      new TH1F("hPTrasverse", "Generated p trasverses", 1e5, 0., 5.);
-  TH1F* hEnergy =
-      new TH1F("hEnergy", "Generated particle energies", 1000, 0., 6.);
+  TH1F* hParticleTypes = new TH1F("hParticleTypes", "Generated particle12 types", 7, -0.5, 6.5);
+  TH1F* hPhi           = new TH1F("hPhi", "Generated phi angles", 1e5, 0., 2. * M_PI);
+  TH1F* hTheta         = new TH1F("hTheta", "Generated theta angles", 1e5, 0., M_PI);
+  TH1F* hP             = new TH1F("hP", "Generated p magnitudes", 1e5, 0., 5.);
+  TH1F* hPTrasverse    = new TH1F("hPTrasverse", "Generated p trasverses", 1e5, 0., 5.);
+  TH1F* hEnergy        = new TH1F("hEnergy", "Generated particle energies", 1000, 0., 6.);
 
-  TH1F* hInvariantMass =
-      new TH1F("hInvariantMass", "Generated invariant masses", 1000, 0., 12.);
-  TH1F* hInvariantMassDiscordant =
-      new TH1F("hInvariantMassDiscordant",
-               "Generated discordant invariant masses", 1000, 0., 12.);
-  TH1F* hInvariantMassConcordant =
-      new TH1F("hInvariantMassConcordant",
-               "Generated concordant invariant masses", 1000, 0., 12.);
-  TH1F* hInvariantMassDiscordantPiK =
-      new TH1F("hInvariantMassDiscordantPiK",
-               "Generated discordant invariant masses pi/K", 1000, 0., 12.);
-  TH1F* hInvariantMassConcordantPiK =
-      new TH1F("hInvariantMassConcordantPiK",
-               "Generated concordant invariant masses pi/K", 1000, 0., 12.);
-  TH1F* hInvariantMassDecayed =
-      new TH1F("hInvariantMassDecayed", "Generated decayed invariant masses",
-               1000, 0., 12.);
+  TH1F* hInvariantMass              = new TH1F("hInvariantMass", "Generated invariant masses", 1000, 0., 8.);  
+  TH1F* hInvariantMassDiscordant    = new TH1F("hInvariantMassDiscordant", "Generated discordant invariant masses", 500, 0., 8.);
+  TH1F* hInvariantMassConcordant    = new TH1F("hInvariantMassConcordant", "Generated concordant invariant masses", 500, 0., 8.);
+  TH1F* hInvariantMassDiscordantPiK = new TH1F("hInvariantMassDiscordantPiK", "Generated discordant invariant masses pi/K", 500, 0., 8.);
+  TH1F* hInvariantMassConcordantPiK = new TH1F("hInvariantMassConcordantPiK", "Generated concordant invariant masses pi/K", 500, 0., 8.);
+  TH1F* hInvariantMassDecayed       = new TH1F("hInvariantMassDecayed", "Generated decayed invariant masses", 500, 0., 8.);
 
   hParticleTypes->Sumw2();
   hPhi->Sumw2();
@@ -80,9 +67,7 @@ void kapef()
       double theta = gRandom->Uniform(0., M_PI);
       double p     = gRandom->Exp(1.);
 
-      eventParticles[arrayIndex].SetP(p * std::sin(theta) * std::cos(phi),
-                                      p * std::sin(theta) * std::sin(phi),
-                                      p * std::cos(theta));
+      eventParticles[arrayIndex].SetP(p * std::sin(theta) * std::cos(phi), p * std::sin(theta) * std::sin(phi), p * std::cos(theta));
 
       double randomChoice = gRandom->Rndm();
       if (randomChoice < 0.40) {
@@ -116,11 +101,10 @@ void kapef()
           eventParticles[arrayEnd + 1].SetIndex(K_PLUS);
         }
 
-        if (eventParticles[arrayIndex].Decay2body(eventParticles[arrayEnd],
-                                                  eventParticles[arrayEnd + 1])
-            != 0) {
-          throw std::runtime_error{
-              "decayed to body failed, check terminal for more info.\n"};
+        int error = eventParticles[arrayIndex].Decay2body(eventParticles[arrayEnd], eventParticles[arrayEnd + 1]);
+        if (error != 0) {
+          std::cout << "decayed to body failed with error " << error << '\n';
+          throw std::runtime_error{"decayed to body failed, check terminal for more info.\n"};
         }
 
         arrayEnd += 2;
@@ -130,35 +114,39 @@ void kapef()
       hPhi->Fill(phi);
       hTheta->Fill(theta);
       hP->Fill(p);
-      hPTrasverse->Fill(
-          std::sqrt(std::pow(eventParticles[arrayIndex].GetPx(), 2)
-                    + std::pow(eventParticles[arrayIndex].GetPy(), 2)));
+      hPTrasverse->Fill(std::sqrt(std::pow(eventParticles[arrayIndex].GetPx(), 2) + std::pow(eventParticles[arrayIndex].GetPy(), 2)));
       hEnergy->Fill(eventParticles[arrayIndex].GetEnergy());
     }
 
     // inv masses between particles
     for (int i = 0; i != arrayEnd - 1; ++i) {
-      for (int j = i + 1; j < arrayEnd; ++j) {
+      if (eventParticles[i].GetIndex() == K_STAR) { // ignore k_star
+        continue;
+      }
+      for (int j = i + 1; j != arrayEnd; ++j) {
+        if (eventParticles[j].GetIndex() == K_STAR) { // ignore k_star
+          continue;
+        }
+
         double invMass = eventParticles[i].InvMass(eventParticles[j]);
         hInvariantMass->Fill(invMass);
+
+        int i_type = eventParticles[i].GetIndex();
+        int j_type = eventParticles[j].GetIndex();
         if (eventParticles[i].GetCharge() * eventParticles[j].GetCharge() < 0) {
           hInvariantMassDiscordant->Fill(invMass);
           // sum equals 3 if and only if the particles are a pi and k discordant
           // couple
-          if ((eventParticles[i].GetIndex() + eventParticles[j].GetIndex())
-              == 3) {
+          // if ((eventParticles[i].GetIndex() + eventParticles[j].GetIndex()) == 3)
+          if ((i_type == PI_PLUS && j_type == K_MINUS) || (i_type == PI_MINUS && j_type == K_PLUS) || (j_type == PI_PLUS && i_type == K_MINUS) || (j_type == PI_MINUS && i_type == K_PLUS)) {
             hInvariantMassDiscordantPiK->Fill(invMass);
           }
         } else { // concordant
           hInvariantMassConcordant->Fill(invMass);
           // the 3 conditions are met if and only if the particles are a pi and
           // k concordant couple
-          if ((eventParticles[i].GetIndex() != eventParticles[j].GetIndex())
-              && ((eventParticles[i].GetIndex() + eventParticles[j].GetIndex())
-                      % 2
-                  == 0)
-              && ((eventParticles[i].GetIndex() + eventParticles[j].GetIndex())
-                  <= 4)) {
+          // if ((eventParticles[i].GetIndex() != eventParticles[j].GetIndex()) && ((eventParticles[i].GetIndex() + eventParticles[j].GetIndex()) % 2 == 0) && ((eventParticles[i].GetIndex() + eventParticles[j].GetIndex()) <= 4)) {
+          if ((i_type == PI_PLUS && j_type == K_PLUS) || (i_type == PI_MINUS && j_type == K_MINUS) || (j_type == PI_PLUS && i_type == K_PLUS) || (j_type == PI_MINUS && i_type == K_MINUS)) {
             hInvariantMassConcordantPiK->Fill(invMass);
           }
         }
@@ -167,14 +155,12 @@ void kapef()
 
     int i = 100;
     while (i < arrayEnd) {
-      hInvariantMassDecayed->Fill(
-          eventParticles[i].InvMass(eventParticles[i + 1]));
+      hInvariantMassDecayed->Fill(eventParticles[i].InvMass(eventParticles[i + 1]));
       i += 2;
     }
   }
 
-  hInvariantMassDecayed->Draw();
-
+  // hInvariantMassDecayed->Draw();
 
   TFile* file = new TFile("histo.root", "RECREATE");
 

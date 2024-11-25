@@ -34,6 +34,14 @@ void Analysis()
   TH1F* hInvariantMassConcordantPiK = (TH1F*)file->Get("hInvariantMassConcordantPiK");
   TH1F* hInvariantMassDecayed       = (TH1F*)file->Get("hInvariantMassDecayed");
 
+  TCanvas* invariantMassCanvas = new TCanvas("invariantMassCanvas", "invariantMassCanvas", 0, 0, 800, 600);
+  hInvariantMass->Draw();
+  TCanvas* invariantMassDiscordantCanvas = new TCanvas("invariantMassDiscordantCanvas", "invariantMassDiscordantCanvas", 0, 0, 800, 600);
+  hInvariantMassDiscordant->Draw();
+  TCanvas* invariantMassConcordantCanvas = new TCanvas("invariantMassConcordantCanvas", "invariantMassConcordantCanvas", 0, 0, 800, 600);
+  hInvariantMassConcordant->Draw();
+
+
   // check histo entries
   if (hParticleTypes->GetEntries() != 1e7)
     std::cout << "hParticleTypes has the wrong number of entries \n";
@@ -62,6 +70,8 @@ void Analysis()
   std::cout << "|K* \t\t|" << ExpectedWithError(1e7, 0.010) << "\t\t|" << hParticleTypes->GetBinContent(K_STAR + 1) << " ± " << hParticleTypes->GetBinError(K_STAR + 1) << "\t|\n";
 
   // check phi
+  TCanvas* phiCanvas = new TCanvas("phiCanvas", "phiCanvas", 0, 0, 800, 600);
+
   TF1* phiDistr = new TF1("phiDistr", "[0]", 0, 2 * TMath::Pi());
   hPhi->Fit(phiDistr);
   std::cout << "Phi Distribution Fit: y = A\n";
@@ -73,6 +83,8 @@ void Analysis()
 
 
   // check theta
+  TCanvas* thetaCanvas = new TCanvas("thetaCanvas", "thetaCanvas", 0, 0, 800, 600);
+
   TF1* thetaDistr = new TF1("thetaDistr", "[0]", 0, TMath::Pi());
   hTheta->Fit(thetaDistr);
   std::cout << "Theta Distribution Fit: y = A\n";
@@ -84,6 +96,8 @@ void Analysis()
 
 
   // check p
+  TCanvas* pCanvas = new TCanvas("pCanvas", "pCanvas", 0, 0, 800, 600);
+
   TF1* pDistr = new TF1("pDistr", "[0]*TMath::Exp(-x/[1])", 0., 5.);
   pDistr->SetParameter(0, 500);
   pDistr->SetParameter(1, 1);
@@ -93,16 +107,46 @@ void Analysis()
   std::cout << "Parameter B: " << pDistr->GetParameter(1) << " ± " << pDistr->GetParError(1) << "\n";
   std::cout << "Reduced Chi Square: " << pDistr->GetChisquare()/pDistr->GetNDF()<< "\n";;
 
+
   //bohh
   std::cout << "Chi Square Probability: " << pDistr->GetProb() << "\n";;
 
-  
+  TCanvas* diffMassCanvas = new TCanvas("diffMassCanvas", "diffMassCanvas", 0, 0, 800, 600);  
+  diffMassCanvas->Divide(3,1);
   TH1F* hDiffMass = new TH1F(*hInvariantMassDiscordant);
   hDiffMass->Add(hInvariantMassConcordant, -1);
 
+  diffMassCanvas->cd(1);
+  hInvariantMassDiscordant->Draw();
+  diffMassCanvas->cd(2);
+  hInvariantMassConcordant->Draw();
+  diffMassCanvas->cd(3);
+  hDiffMass->Draw();
+
+  TF1* diffMassDistr = new TF1("diffMassDistr", "gaus(0)", 0., 8.);
+  hDiffMass->Fit(diffMassDistr);
+
+
+  TCanvas* diffMassPiKCanvas = new TCanvas("diffMassPiKCanvas", "diffMassPiKCanvas", 0, 0, 800, 600);
+  // diffMassPiKCanvas->Divide(3,1);
   TH1F* hDiffMassPiK = new TH1F(*hInvariantMassDiscordantPiK);
   hDiffMassPiK->Add(hInvariantMassConcordantPiK, -1);
 
+  // diffMassPiKCanvas->cd(1);
+  // hInvariantMassDiscordantPiK->Draw();
+  // diffMassPiKCanvas->cd(2);
+  // hInvariantMassConcordantPiK->Draw();
+  // diffMassPiKCanvas->cd(3);
+  hDiffMassPiK->Draw();
+
+  TF1* DiffMassPiKDistr = new TF1("DiffMassPiKDistr", "gaus(0)", 0., 8.);
+  hDiffMassPiK->Fit(DiffMassPiKDistr);
+
+
+
+
+  TCanvas* invariantMassDecayedCanvas = new TCanvas("invariantMassDecayedCanvas", "invariantMassDecayedCanvas", 0, 0, 800, 600);
+  hInvariantMassDecayed->Draw();
 
   //   hParticleTypes
   //   hPhi
