@@ -2,6 +2,7 @@
 #include "TFile.h"
 #include "TH1.h"
 #include "TRandom.h"
+#include "TRandom3.h"
 #include <array>
 #include <cmath> //M_PI
 #include <iostream>
@@ -26,6 +27,8 @@ void kapef()
   kape::Particle::AddParticleType("p-", 0.93827, -1);       // protone -
   kape::Particle::AddParticleType("K*", 0.89166, 0, 0.050); // K*
 
+  delete gRandom;
+  gRandom = new TRandom3();
   gRandom->SetSeed(136279841);
 
   // chose 300 because all particles could be a k* and decay in two more
