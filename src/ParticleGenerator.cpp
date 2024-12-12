@@ -42,12 +42,12 @@ void kapef()
   TH1F* hPTrasverse    = new TH1F("hPTrasverse", "Generated p trasverses", 1e5, 0., 5.);
   TH1F* hEnergy        = new TH1F("hEnergy", "Generated particle energies", 1000, 0., 6.);
 
-  TH1F* hInvariantMass              = new TH1F("hInvariantMass", "Generated invariant masses", 1000, 0., 8.);  
-  TH1F* hInvariantMassDiscordant    = new TH1F("hInvariantMassDiscordant", "Generated discordant invariant masses", 500, 0., 8.);
-  TH1F* hInvariantMassConcordant    = new TH1F("hInvariantMassConcordant", "Generated concordant invariant masses", 500, 0., 8.);
-  TH1F* hInvariantMassDiscordantPiK = new TH1F("hInvariantMassDiscordantPiK", "Generated discordant invariant masses pi/K", 500, 0., 8.);
-  TH1F* hInvariantMassConcordantPiK = new TH1F("hInvariantMassConcordantPiK", "Generated concordant invariant masses pi/K", 500, 0., 8.);
-  TH1F* hInvariantMassDecayed       = new TH1F("hInvariantMassDecayed", "Generated decayed invariant masses", 500, 0., 8.);
+  TH1F* hInvariantMass              = new TH1F("hInvariantMass", "Generated invariant masses", 1e5, 0., 8.);
+  TH1F* hInvariantMassDiscordant    = new TH1F("hInvariantMassDiscordant", "Generated discordant invariant masses", 1e4, 0., 8.);
+  TH1F* hInvariantMassConcordant    = new TH1F("hInvariantMassConcordant", "Generated concordant invariant masses", 1e4, 0., 8.);
+  TH1F* hInvariantMassDiscordantPiK = new TH1F("hInvariantMassDiscordantPiK", "Generated discordant invariant masses pi/K", 1e4, 0., 8.);
+  TH1F* hInvariantMassConcordantPiK = new TH1F("hInvariantMassConcordantPiK", "Generated concordant invariant masses pi/K", 1e4, 0., 8.);
+  TH1F* hInvariantMassDecayed       = new TH1F("hInvariantMassDecayed", "Generated decayed invariant masses", 100, 0., 8.);
 
   hParticleTypes->Sumw2();
   hPhi->Sumw2();
@@ -136,19 +136,15 @@ void kapef()
 
         int i_type = eventParticles[i].GetIndex();
         int j_type = eventParticles[j].GetIndex();
+
         if (eventParticles[i].GetCharge() * eventParticles[j].GetCharge() < 0) {
           hInvariantMassDiscordant->Fill(invMass);
-          // sum equals 3 if and only if the particles are a pi and k discordant
-          // couple
-          // if ((eventParticles[i].GetIndex() + eventParticles[j].GetIndex()) == 3)
+
           if ((i_type == PI_PLUS && j_type == K_MINUS) || (i_type == PI_MINUS && j_type == K_PLUS) || (j_type == PI_PLUS && i_type == K_MINUS) || (j_type == PI_MINUS && i_type == K_PLUS)) {
             hInvariantMassDiscordantPiK->Fill(invMass);
           }
         } else { // concordant
           hInvariantMassConcordant->Fill(invMass);
-          // the 3 conditions are met if and only if the particles are a pi and
-          // k concordant couple
-          // if ((eventParticles[i].GetIndex() != eventParticles[j].GetIndex()) && ((eventParticles[i].GetIndex() + eventParticles[j].GetIndex()) % 2 == 0) && ((eventParticles[i].GetIndex() + eventParticles[j].GetIndex()) <= 4)) {
           if ((i_type == PI_PLUS && j_type == K_PLUS) || (i_type == PI_MINUS && j_type == K_MINUS) || (j_type == PI_PLUS && i_type == K_PLUS) || (j_type == PI_MINUS && i_type == K_MINUS)) {
             hInvariantMassConcordantPiK->Fill(invMass);
           }
@@ -163,7 +159,6 @@ void kapef()
     }
   }
 
-  // hInvariantMassDecayed->Draw();
 
   TFile* file = new TFile("histo.root", "RECREATE");
 

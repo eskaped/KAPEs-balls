@@ -41,10 +41,10 @@ void Analysis()
 
   // hPTrasverse->Rebin(5);
   // hEnergy->Rebin(5);
-  // hInvariantMassDiscordant->Rebin(5);
-  // hInvariantMassConcordant->Rebin(5);
-  // hInvariantMassDiscordantPiK->Rebin(5);
-  // hInvariantMassConcordantPiK->Rebin(5);
+  hInvariantMassDiscordant->Rebin(20);
+  hInvariantMassConcordant->Rebin(20);
+  hInvariantMassDiscordantPiK->Rebin(20);
+  hInvariantMassConcordantPiK->Rebin(20);
   // TCanvas* invariantMassCanvas = new TCanvas("invariantMassCanvas", "invariantMassCanvas", 0, 0, 800, 600);
   // hInvariantMass->Draw();
   // TCanvas* invariantMassDiscordantCanvas = new TCanvas("invariantMassDiscordantCanvas", "invariantMassDiscordantCanvas", 0, 0, 800, 600);
@@ -218,4 +218,6 @@ void Analysis()
   //   hInvariantMassDecayed->Draw();
 
   //   file->Close();
+
+
 }
