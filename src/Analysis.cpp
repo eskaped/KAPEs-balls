@@ -1,5 +1,7 @@
 #include "TF1.h"
+#include "TH1.h"
 #include "TFile.h"
+#include "TCanvas.h"
 #include <iostream>
 #include <string>
 std::string ExpectedWithError(int nTot, double probability)
@@ -43,8 +45,8 @@ void Analysis()
   // hEnergy->Rebin(5);
   hInvariantMassDiscordant->Rebin(20);
   hInvariantMassConcordant->Rebin(20);
-  hInvariantMassDiscordantPiK->Rebin(20);
-  hInvariantMassConcordantPiK->Rebin(20);
+  hInvariantMassDiscordantPiK->Rebin(10);
+  hInvariantMassConcordantPiK->Rebin(10);
   // TCanvas* invariantMassCanvas = new TCanvas("invariantMassCanvas", "invariantMassCanvas", 0, 0, 800, 600);
   // hInvariantMass->Draw();
   // TCanvas* invariantMassDiscordantCanvas = new TCanvas("invariantMassDiscordantCanvas", "invariantMassDiscordantCanvas", 0, 0, 800, 600);
@@ -90,14 +92,17 @@ void Analysis()
 
   // particle types
   Figure1->cd(1);
-  hParticleTypes->Scale(1. / hParticleTypes->GetEntries());
+
+  //normalize
+  hParticleTypes->Scale(1. / hParticleTypes->Integral(), "width");
   TF1* particleTypesDistr = new TF1("particleTypesDistr", "[0]*(x<0.5) + [1]*(0.5<x && x<1.5) + [2]*(1.5<x && x<2.5) + [3]*(2.5<x && x<3.5) + [4]*(3.5<x && x<4.5) + [5]*(4.5<x && x<5.5) + [6]*(5.5<x && x<6.5)", -0.5, 6.5);
   hParticleTypes->Fit(particleTypesDistr);
   std::cout << "Particle Types Distribution Fit: y = A*e^(-x/B)\n"; //**************************** */
   // std::cout << "Parameter A: " << pDistr->GetParameter(0) << " ± " << pDistr->GetParError(0) << "\n";
   // std::cout << "Parameter B: " << pDistr->GetParameter(1) << " ± " << pDistr->GetParError(1) << "\n";
   std::cout << "Reduced Chi Square: " << particleTypesDistr->GetChisquare() / particleTypesDistr->GetNDF() << "\n";
-  
+
+  hParticleTypes->SetTitle("Particle types' distribution");
   hParticleTypes->GetXaxis()->SetBinLabel(1, "#pi+");
   hParticleTypes->GetXaxis()->SetBinLabel(2, "#pi-");
   hParticleTypes->GetXaxis()->SetBinLabel(3, "K+");
@@ -106,15 +111,19 @@ void Analysis()
   hParticleTypes->GetXaxis()->SetBinLabel(6, "p-");
   hParticleTypes->GetXaxis()->SetBinLabel(7, "K*");
   hParticleTypes->GetXaxis()->SetLabelSize(0.065);
+  hParticleTypes->GetXaxis()->SetTitleOffset(1.2);
   hParticleTypes->GetXaxis()->SetTitle("Particle type");
-  hParticleTypes->GetYaxis()->SetTitle("Percentage of particle Type");
-  hParticleTypes->SetFillColor(kBlue);
-  hParticleTypes->Draw("SAME");
+  hParticleTypes->GetYaxis()->SetTitle("Probability of particle type");
+  hParticleTypes->SetFillColor(kAzure-2);
+  hParticleTypes->SetLineColor(kAzure-2);
+  hParticleTypes->SetBarWidth(1);
+  
+  hParticleTypes->Draw("b");
 
   // check p
   Figure1->cd(2);
 
-  hP->Scale(1./hP->GetEntries());
+  hP->Scale(1. / hP->Integral(), "width");
 
   TF1* pDistr = new TF1("pDistr", "[0]*TMath::Exp(-x/[1])", 0., 5.);
   pDistr->SetParameter(0, 1);
@@ -128,12 +137,20 @@ void Analysis()
 
   // bohh
   std::cout << "Chi Square Probability: " << pDistr->GetProb() << "\n";
+
+  hP->SetTitle("Impulse magnitudes' distribution");
+  hP->GetXaxis()->SetTitle("Impulse magnitude");
+  hP->GetYaxis()->SetTitle("Probability of impulse magnitude");
+  hP->GetXaxis()->SetTitleOffset(1.2);
+  hP->SetFillColor(kAzure-2);
+  hP->SetLineColor(kAzure-2);
   hP->Draw();
 
 
   // check phi
-  Figure1->cd(3);
-  hPhi->Draw();
+  Figure1->cd(3);  
+  hPhi->Scale(1. / hPhi->Integral(), "width");
+
 
   TF1* phiDistr = new TF1("phiDistr", "[0]", 0, 2 * TMath::Pi());
   hPhi->Fit(phiDistr);
@@ -143,10 +160,19 @@ void Analysis()
 
   // bohh
   std::cout << "Chi Square Probability: " << phiDistr->GetProb() << "\n";
+  
+  hPhi->SetTitle("Azimuthal angles' distribution");
+  hPhi->GetXaxis()->SetTitle("Azimuthal angle");
+  hPhi->GetYaxis()->SetTitle("Probability of azimuthal angle");
+  hPhi->GetXaxis()->SetTitleOffset(1.2);
+  hPhi->SetFillColor(kAzure-2);
+  hPhi->SetLineColor(kAzure-2);
+  hPhi->Draw();
 
   // check theta
-  Figure1->cd(4);
-  hTheta->Draw();
+  Figure1->cd(4);  
+  hTheta->Scale(1. / hTheta->Integral(), "width");
+
 
   TF1* thetaDistr = new TF1("thetaDistr", "[0]", 0, TMath::Pi());
   hTheta->Fit(thetaDistr);
@@ -157,6 +183,13 @@ void Analysis()
   // bohh
   std::cout << "Chi Square Probability: " << thetaDistr->GetProb() << "\n";
 
+  hTheta->SetTitle("Polar angles' distribution");
+  hTheta->GetXaxis()->SetTitle("Polar angle");
+  hTheta->GetYaxis()->SetTitle("Probability of polar angle");
+  hTheta->GetXaxis()->SetTitleOffset(1.2);
+  hTheta->SetFillColor(kAzure-2);
+  hTheta->SetLineColor(kAzure-2);
+  hTheta->Draw();
 
   //Figure 2: diff gaussians
 
@@ -187,8 +220,8 @@ void Analysis()
   Figure2->cd(3);
   hDiffMassPiK->Draw();
 
-  TF1* DiffMassPiKDistr = new TF1("DiffMassPiKDistr", "gaus(0)", 0., 8.);
-  hDiffMassPiK->Fit(DiffMassPiKDistr);
+  TF1* diffMassPiKDistr = new TF1("diffMassPiKDistr", "gaus(0)", 0., 8.);
+  hDiffMassPiK->Fit(diffMassPiKDistr);
 
 
   //   hParticleTypes

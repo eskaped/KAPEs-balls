@@ -35,7 +35,7 @@ void kapef()
   // particles
   std::array<kape::Particle, 300> eventParticles;
 
-  TH1F* hParticleTypes = new TH1F("hParticleTypes", "Generated particle12 types", 7, -0.5, 6.5);
+  TH1F* hParticleTypes = new TH1F("hParticleTypes", "Generated particle types", 7, -0.5, 6.5);
   TH1F* hPhi           = new TH1F("hPhi", "Generated phi angles", 1e5, 0., 2. * M_PI);
   TH1F* hTheta         = new TH1F("hTheta", "Generated theta angles", 1e5, 0., M_PI);
   TH1F* hP             = new TH1F("hP", "Generated p magnitudes", 1e5, 0., 5.);
@@ -47,7 +47,7 @@ void kapef()
   TH1F* hInvariantMassConcordant    = new TH1F("hInvariantMassConcordant", "Generated concordant invariant masses", 1e4, 0., 8.);
   TH1F* hInvariantMassDiscordantPiK = new TH1F("hInvariantMassDiscordantPiK", "Generated discordant invariant masses pi/K", 1e4, 0., 8.);
   TH1F* hInvariantMassConcordantPiK = new TH1F("hInvariantMassConcordantPiK", "Generated concordant invariant masses pi/K", 1e4, 0., 8.);
-  TH1F* hInvariantMassDecayed       = new TH1F("hInvariantMassDecayed", "Generated decayed invariant masses", 100, 0., 8.);
+  TH1F* hInvariantMassDecayed       = new TH1F("hInvariantMassDecayed", "Generated decayed invariant masses", 100, 0.5, 1.4);
 
   hParticleTypes->Sumw2();
   hPhi->Sumw2();
@@ -153,7 +153,7 @@ void kapef()
     }
 
     int i = 100;
-    while (i < arrayEnd) {
+    while (i != arrayEnd) {
       hInvariantMassDecayed->Fill(eventParticles[i].InvMass(eventParticles[i + 1]));
       i += 2;
     }
