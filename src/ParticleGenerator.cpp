@@ -17,7 +17,7 @@ enum ParticlesIndexes
   K_STAR
 };
 
-void kapef()
+void RunSimulation()
 {
   kape::Particle::AddParticleType("pi+", 0.13957, +1);      // pione +
   kape::Particle::AddParticleType("pi-", 0.13957, -1);      // pione -

@@ -1,7 +1,7 @@
-#include "TF1.h"
-#include "TH1.h"
-#include "TFile.h"
 #include "TCanvas.h"
+#include "TF1.h"
+#include "TFile.h"
+#include "TH1.h"
 #include "TStyle.h"
 #include <iostream>
 #include <string>
@@ -82,19 +82,18 @@ void Analysis()
   std::cout << "|p- \t\t|" << ExpectedWithError(1e7, 0.045) << "\t\t|" << hParticleTypes->GetBinContent(P_PLUS + 1) << " ± " << hParticleTypes->GetBinError(P_PLUS + 1) << "\t|\n";
   std::cout << "|K* \t\t|" << ExpectedWithError(1e7, 0.010) << "\t\t|" << hParticleTypes->GetBinContent(K_STAR + 1) << " ± " << hParticleTypes->GetBinError(K_STAR + 1) << "\t|\n";
 
-
-  //Figure 1: particle types, p, angles
+  // Figure 1: particle types, p, angles
   TCanvas* Figure1 = new TCanvas("Figure1", "Figure1", 0, 0, 800, 600);
   Figure1->Divide(2, 2);
 
+  // add all parameters to the output in the figure
   gStyle->SetOptStat(11);
   gStyle->SetOptFit(1111);
-
 
   // particle types
   Figure1->cd(1);
 
-  //normalize
+  // normalize
   hParticleTypes->Scale(1. / hParticleTypes->Integral(), "width");
   TF1* particleTypesDistr = new TF1("particleTypesDistr", "[0]*(x<0.5) + [1]*(0.5<x && x<1.5) + [2]*(1.5<x && x<2.5) + [3]*(2.5<x && x<3.5) + [4]*(3.5<x && x<4.5) + [5]*(4.5<x && x<5.5) + [6]*(5.5<x && x<6.5)", -0.5, 6.5);
   hParticleTypes->Fit(particleTypesDistr);
@@ -115,11 +114,12 @@ void Analysis()
   hParticleTypes->GetXaxis()->SetTitleOffset(1.2);
   hParticleTypes->GetXaxis()->SetTitle("Particle type");
   hParticleTypes->GetYaxis()->SetTitle("Probability of particle type");
-  hParticleTypes->SetFillColor(kAzure-2);
-  hParticleTypes->SetLineColor(kAzure-2);
-  hParticleTypes->SetBarWidth(1);
-
-  hParticleTypes->Draw("b");
+  hParticleTypes->SetFillColor(kAzure - 2);
+  hParticleTypes->SetLineColor(kAzure - 2);
+  hParticleTypes->SetBarWidth(0.2);
+  hParticleTypes->SetBarOffset(0.8);
+  hParticleTypes->Sumw2(kFALSE);
+  hParticleTypes->Draw("b same");
 
   // check p
   Figure1->cd(2);
@@ -135,7 +135,6 @@ void Analysis()
   std::cout << "Parameter B: " << pDistr->GetParameter(1) << " ± " << pDistr->GetParError(1) << "\n";
   std::cout << "Reduced Chi Square: " << pDistr->GetChisquare() / pDistr->GetNDF() << "\n";
 
-
   // bohh
   std::cout << "Chi Square Probability: " << pDistr->GetProb() << "\n";
 
@@ -143,15 +142,13 @@ void Analysis()
   hP->GetXaxis()->SetTitle("Impulse magnitude");
   hP->GetYaxis()->SetTitle("Probability of impulse magnitude");
   hP->GetXaxis()->SetTitleOffset(1.2);
-  hP->SetFillColor(kAzure-2);
-  hP->SetLineColor(kAzure-2);
+  hP->SetFillColor(kAzure - 2);
+  hP->SetLineColor(kAzure - 2);
   hP->Draw();
-
 
   // check phi
   Figure1->cd(3);
   hPhi->Scale(1. / hPhi->Integral(), "width");
-
 
   TF1* phiDistr = new TF1("phiDistr", "[0]", 0, 2 * TMath::Pi());
   hPhi->Fit(phiDistr);
@@ -166,14 +163,13 @@ void Analysis()
   hPhi->GetXaxis()->SetTitle("Azimuthal angle");
   hPhi->GetYaxis()->SetTitle("Probability of azimuthal angle");
   hPhi->GetXaxis()->SetTitleOffset(1.2);
-  hPhi->SetFillColor(kAzure-2);
-  hPhi->SetLineColor(kAzure-2);
+  hPhi->SetFillColor(kAzure - 2);
+  hPhi->SetLineColor(kAzure - 2);
   hPhi->Draw();
 
   // check theta
   Figure1->cd(4);
   hTheta->Scale(1. / hTheta->Integral(), "width");
-
 
   TF1* thetaDistr = new TF1("thetaDistr", "[0]", 0, TMath::Pi());
   hTheta->Fit(thetaDistr);
@@ -188,16 +184,16 @@ void Analysis()
   hTheta->GetXaxis()->SetTitle("Polar angle");
   hTheta->GetYaxis()->SetTitle("Probability of polar angle");
   hTheta->GetXaxis()->SetTitleOffset(1.2);
-  hTheta->SetFillColor(kAzure-2);
-  hTheta->SetLineColor(kAzure-2);
+  hTheta->SetFillColor(kAzure - 2);
+  hTheta->SetLineColor(kAzure - 2);
   hTheta->Draw();
 
-  //Figure 2: diff gaussians
+  // Figure 2: diff gaussians
 
   TCanvas* Figure2 = new TCanvas("Figure2", "Figure2", 0, 0, 800, 600);
   Figure2->Divide(3, 1);
 
-  //True K*
+  // True K*
   Figure2->cd(1);
   hInvariantMassDecayed->SetTitle("K* invariant masses");
   hInvariantMassDecayed->GetXaxis()->SetTitle("Invariant mass");
@@ -207,9 +203,8 @@ void Analysis()
   hInvariantMassDecayed->Draw();
   TF1* invariantMassDecayedDistr = new TF1("invariantMassDecayedDistr", "gaus(0)", 0., 8.);
   hInvariantMassDecayed->Fit(invariantMassDecayedDistr);
- 
 
-  //Difference all
+  // Difference all
   TH1F* hDiffMass = new TH1F(*hInvariantMassDiscordant);
   hDiffMass->Add(hInvariantMassConcordant, -1);
 
@@ -217,14 +212,14 @@ void Analysis()
   hDiffMass->SetTitle("Discordant particles' invariant masses");
   hDiffMass->GetXaxis()->SetTitle("Invariant mass");
   hDiffMass->GetYaxis()->SetTitle("Occurrences");
-  hDiffMass->SetLineColor(kAzure-2);
-  hDiffMass->SetFillColor(kAzure-2);
+  hDiffMass->SetLineColor(kAzure - 2);
+  hDiffMass->SetFillColor(kAzure - 2);
   hDiffMass->Draw();
 
   TF1* diffMassDistr = new TF1("diffMassDistr", "gaus(0)", 0., 8.);
   hDiffMass->Fit(diffMassDistr);
 
-  //Difference PiK
+  // Difference PiK
   TH1F* hDiffMassPiK = new TH1F(*hInvariantMassDiscordantPiK);
   hDiffMassPiK->Add(hInvariantMassConcordantPiK, -1);
 
@@ -232,13 +227,12 @@ void Analysis()
   hDiffMassPiK->SetTitle("#pi - k invariant masses");
   hDiffMassPiK->GetXaxis()->SetTitle("Invariant mass");
   hDiffMassPiK->GetYaxis()->SetTitle("Occurrences");
-  hDiffMassPiK->SetLineColor(kAzure-2);
-  hDiffMassPiK->SetFillColor(kAzure-2);
+  hDiffMassPiK->SetLineColor(kAzure - 2);
+  hDiffMassPiK->SetFillColor(kAzure - 2);
   hDiffMassPiK->Draw();
 
   TF1* diffMassPiKDistr = new TF1("diffMassPiKDistr", "gaus(0)", 0., 8.);
   hDiffMassPiK->Fit(diffMassPiKDistr);
-
 
   //   hParticleTypes
   //   hPhi
@@ -266,7 +260,5 @@ void Analysis()
   //   hInvariantMassConcordantPiK->Draw();
   //   hInvariantMassDecayed->Draw();
 
-  //   file->Close();
-
-
+  // file->Close();
 }
