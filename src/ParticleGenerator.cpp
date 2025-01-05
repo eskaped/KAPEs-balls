@@ -66,13 +66,13 @@ void kapef()
     // index for the next free space where decayed particles can be placed
     int arrayEnd = 100;
     for (int arrayIndex = 0; arrayIndex < 100; ++arrayIndex) {
-      double phi   = gRandom->Uniform(0., 2. * M_PI);
-      double theta = gRandom->Uniform(0., M_PI);
-      double p     = gRandom->Exp(1.);
+      Double_t phi   = gRandom->Uniform(0., 2. * M_PI);
+      Double_t theta = gRandom->Uniform(0., M_PI);
+      Double_t p     = gRandom->Exp(1.);
 
       eventParticles[arrayIndex].SetP(p * std::sin(theta) * std::cos(phi), p * std::sin(theta) * std::sin(phi), p * std::cos(theta));
 
-      double randomChoice = gRandom->Rndm();
+      Double_t randomChoice = gRandom->Rndm();
       if (randomChoice < 0.40) {
         // pi+
         eventParticles[arrayIndex].SetIndex(PI_PLUS);
@@ -131,7 +131,7 @@ void kapef()
           continue;
         }
 
-        double invMass = eventParticles[i].InvMass(eventParticles[j]);
+        Double_t invMass = eventParticles[i].InvMass(eventParticles[j]);
         hInvariantMass->Fill(invMass);
 
         int i_type = eventParticles[i].GetIndex();
@@ -153,7 +153,7 @@ void kapef()
     }
 
     int i = 100;
-    while (i != arrayEnd) {
+    while (i < arrayEnd) {
       hInvariantMassDecayed->Fill(eventParticles[i].InvMass(eventParticles[i + 1]));
       i += 2;
     }

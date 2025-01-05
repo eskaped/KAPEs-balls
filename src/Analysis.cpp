@@ -5,7 +5,7 @@
 #include "TStyle.h"
 #include <iostream>
 #include <string>
-std::string ExpectedWithError(int nTot, double probability)
+std::string ExpectedWithError(Int_t nTot, Double_t probability)
 {
   return std::string{std::to_string(nTot * probability) + " ± " + std::to_string(std::sqrt((1. - probability) * (nTot)*probability))};
 }
