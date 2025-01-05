@@ -2,6 +2,7 @@
 #include "TH1.h"
 #include "TFile.h"
 #include "TCanvas.h"
+#include "TStyle.h"
 #include <iostream>
 #include <string>
 std::string ExpectedWithError(int nTot, double probability)
@@ -117,7 +118,7 @@ void Analysis()
   hParticleTypes->SetFillColor(kAzure-2);
   hParticleTypes->SetLineColor(kAzure-2);
   hParticleTypes->SetBarWidth(1);
-  
+
   hParticleTypes->Draw("b");
 
   // check p
@@ -133,7 +134,7 @@ void Analysis()
   std::cout << "Parameter A: " << pDistr->GetParameter(0) << " ± " << pDistr->GetParError(0) << "\n";
   std::cout << "Parameter B: " << pDistr->GetParameter(1) << " ± " << pDistr->GetParError(1) << "\n";
   std::cout << "Reduced Chi Square: " << pDistr->GetChisquare() / pDistr->GetNDF() << "\n";
-  
+
 
   // bohh
   std::cout << "Chi Square Probability: " << pDistr->GetProb() << "\n";
@@ -148,7 +149,7 @@ void Analysis()
 
 
   // check phi
-  Figure1->cd(3);  
+  Figure1->cd(3);
   hPhi->Scale(1. / hPhi->Integral(), "width");
 
 
@@ -160,7 +161,7 @@ void Analysis()
 
   // bohh
   std::cout << "Chi Square Probability: " << phiDistr->GetProb() << "\n";
-  
+
   hPhi->SetTitle("Azimuthal angles' distribution");
   hPhi->GetXaxis()->SetTitle("Azimuthal angle");
   hPhi->GetYaxis()->SetTitle("Probability of azimuthal angle");
@@ -170,7 +171,7 @@ void Analysis()
   hPhi->Draw();
 
   // check theta
-  Figure1->cd(4);  
+  Figure1->cd(4);
   hTheta->Scale(1. / hTheta->Integral(), "width");
 
 
@@ -198,16 +199,26 @@ void Analysis()
 
   //True K*
   Figure2->cd(1);
+  hInvariantMassDecayed->SetTitle("K* invariant masses");
+  hInvariantMassDecayed->GetXaxis()->SetTitle("Invariant mass");
+  hInvariantMassDecayed->GetYaxis()->SetTitle("Occurrences");
+  hInvariantMassDecayed->SetMarkerStyle(kOpenSquare);
+  hInvariantMassDecayed->SetMarkerSize(0.4f);
   hInvariantMassDecayed->Draw();
   TF1* invariantMassDecayedDistr = new TF1("invariantMassDecayedDistr", "gaus(0)", 0., 8.);
   hInvariantMassDecayed->Fit(invariantMassDecayedDistr);
-
+ 
 
   //Difference all
   TH1F* hDiffMass = new TH1F(*hInvariantMassDiscordant);
   hDiffMass->Add(hInvariantMassConcordant, -1);
 
   Figure2->cd(2);
+  hDiffMass->SetTitle("Discordant particles' invariant masses");
+  hDiffMass->GetXaxis()->SetTitle("Invariant mass");
+  hDiffMass->GetYaxis()->SetTitle("Occurrences");
+  hDiffMass->SetLineColor(kAzure-2);
+  hDiffMass->SetFillColor(kAzure-2);
   hDiffMass->Draw();
 
   TF1* diffMassDistr = new TF1("diffMassDistr", "gaus(0)", 0., 8.);
@@ -218,6 +229,11 @@ void Analysis()
   hDiffMassPiK->Add(hInvariantMassConcordantPiK, -1);
 
   Figure2->cd(3);
+  hDiffMassPiK->SetTitle("#pi - k invariant masses");
+  hDiffMassPiK->GetXaxis()->SetTitle("Invariant mass");
+  hDiffMassPiK->GetYaxis()->SetTitle("Occurrences");
+  hDiffMassPiK->SetLineColor(kAzure-2);
+  hDiffMassPiK->SetFillColor(kAzure-2);
   hDiffMassPiK->Draw();
 
   TF1* diffMassPiKDistr = new TF1("diffMassPiKDistr", "gaus(0)", 0., 8.);

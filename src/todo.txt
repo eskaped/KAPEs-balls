@@ -2,4 +2,3 @@ TO-DO:
     - mettere a posto il grafico delle distribuzioni delle particelle
     - cambiare tutti i tipi usati in tipi di root (int -> Int_t ...)
     - NOTA: è normale che la massa invariante abbia un val minimo sotto il quale non va (quando P=0)
-    - in figura2 mettere blu più chiaro e finire i grafici
