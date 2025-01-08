@@ -79,7 +79,7 @@ void Analysis()
   std::cout << "|K+ \t\t|" << ExpectedWithError(1e7, 0.050) << "\t\t|" << hParticleTypes->GetBinContent(K_PLUS + 1) << " ± " << hParticleTypes->GetBinError(K_PLUS + 1) << "\t|\n";
   std::cout << "|K- \t\t|" << ExpectedWithError(1e7, 0.050) << "\t\t|" << hParticleTypes->GetBinContent(K_MINUS + 1) << " ± " << hParticleTypes->GetBinError(K_MINUS + 1) << "\t|\n";
   std::cout << "|p+ \t\t|" << ExpectedWithError(1e7, 0.045) << "\t\t|" << hParticleTypes->GetBinContent(P_PLUS + 1) << " ± " << hParticleTypes->GetBinError(P_PLUS + 1) << "\t|\n";
-  std::cout << "|p- \t\t|" << ExpectedWithError(1e7, 0.045) << "\t\t|" << hParticleTypes->GetBinContent(P_PLUS + 1) << " ± " << hParticleTypes->GetBinError(P_PLUS + 1) << "\t|\n";
+  std::cout << "|p- \t\t|" << ExpectedWithError(1e7, 0.045) << "\t\t|" << hParticleTypes->GetBinContent(P_MINUS + 1) << " ± " << hParticleTypes->GetBinError(P_MINUS + 1) << "\t|\n";
   std::cout << "|K* \t\t|" << ExpectedWithError(1e7, 0.010) << "\t\t|" << hParticleTypes->GetBinContent(K_STAR + 1) << " ± " << hParticleTypes->GetBinError(K_STAR + 1) << "\t|\n";
 
   // Figure 1: particle types, p, angles
@@ -126,16 +126,13 @@ void Analysis()
 
   hP->Scale(1. / hP->Integral(), "width");
 
-  TF1* pDistr = new TF1("pDistr", "[0]*TMath::Exp(-x/[1])", 0., 5.);
+  TF1* pDistr = new TF1("pDistr", "TMath::Exp(-x/[0])", 0., 5.);
   pDistr->SetParameter(0, 1);
   pDistr->SetParameter(1, 1);
   hP->Fit(pDistr);
-  std::cout << "P Distribution Fit: y = A*e^(-x/B)\n";
+  std::cout << "P Distribution Fit: y = e^(-x/A)\n";
   std::cout << "Parameter A: " << pDistr->GetParameter(0) << " ± " << pDistr->GetParError(0) << "\n";
-  std::cout << "Parameter B: " << pDistr->GetParameter(1) << " ± " << pDistr->GetParError(1) << "\n";
   std::cout << "Reduced Chi Square: " << pDistr->GetChisquare() / pDistr->GetNDF() << "\n";
-
-  // bohh
   std::cout << "Chi Square Probability: " << pDistr->GetProb() << "\n";
 
   hP->SetTitle("Impulse magnitudes' distribution");
@@ -155,8 +152,6 @@ void Analysis()
   std::cout << "Phi Distribution Fit: y = A\n";
   std::cout << "Parameter A: " << phiDistr->GetParameter(0) << " ± " << phiDistr->GetParError(0) << "\n";
   std::cout << "Reduced Chi Square: " << phiDistr->GetChisquare() / phiDistr->GetNDF() << "\n";
-
-  // bohh
   std::cout << "Chi Square Probability: " << phiDistr->GetProb() << "\n";
 
   hPhi->SetTitle("Azimuthal angles' distribution");
@@ -176,9 +171,7 @@ void Analysis()
   std::cout << "Theta Distribution Fit: y = A\n";
   std::cout << "Parameter A: " << thetaDistr->GetParameter(0) << " ± " << thetaDistr->GetParError(0) << "\n";
   std::cout << "Reduced Chi Square: " << thetaDistr->GetChisquare() / thetaDistr->GetNDF() << "\n";
-
-  // bohh
-  std::cout << "Chi Square Probability: " << thetaDistr->GetProb() << "\n";
+  std::cout << "Chi Square Probability: " << thetaDistr->GetProb() << "\n\n";
 
   hTheta->SetTitle("Polar angles' distribution");
   hTheta->GetXaxis()->SetTitle("Polar angle");
@@ -192,17 +185,25 @@ void Analysis()
 
   TCanvas* Figure2 = new TCanvas("Figure2", "Figure2", 0, 0, 800, 600);
   Figure2->Divide(3, 1);
-
   // True K*
   Figure2->cd(1);
   hInvariantMassDecayed->SetTitle("K* invariant masses");
   hInvariantMassDecayed->GetXaxis()->SetTitle("Invariant mass");
-  hInvariantMassDecayed->GetYaxis()->SetTitle("Occurrences");
-  hInvariantMassDecayed->SetMarkerStyle(kOpenSquare);
-  hInvariantMassDecayed->SetMarkerSize(0.4f);
+  hInvariantMassDecayed->GetYaxis()->SetTitle("Entries");
+  hInvariantMassDecayed->SetMarkerStyle(kFullSquare);
+  hInvariantMassDecayed->SetMarkerSize(0.5f);
   hInvariantMassDecayed->Draw();
   TF1* invariantMassDecayedDistr = new TF1("invariantMassDecayedDistr", "gaus(0)", 0., 8.);
   hInvariantMassDecayed->Fit(invariantMassDecayedDistr);
+
+  std::cout << "\nK* Invariant mass fit: y = A*exp(-0.5*((x-M)/D)**2)\n";
+  std::cout << "Parameter A: " << invariantMassDecayedDistr->GetParameter(0) << " ± " << invariantMassDecayedDistr->GetParError(0) << "\n";
+  std::cout << "Parameter M: " << invariantMassDecayedDistr->GetParameter(1) << " ± " << invariantMassDecayedDistr->GetParError(1) << "\n";
+  std::cout << "Parameter D: " << invariantMassDecayedDistr->GetParameter(2) << " ± " << invariantMassDecayedDistr->GetParError(2) << "\n";
+  std::cout << "Reduced Chi Square: " << invariantMassDecayedDistr->GetChisquare() / invariantMassDecayedDistr->GetNDF() << "\n";
+  std::cout << "Chi Square Probability: " << invariantMassDecayedDistr->GetProb() << "\n\n";
+
+
 
   // Difference all
   TH1F* hDiffMass = new TH1F(*hInvariantMassDiscordant);
@@ -211,13 +212,20 @@ void Analysis()
   Figure2->cd(2);
   hDiffMass->SetTitle("Discordant particles' invariant masses");
   hDiffMass->GetXaxis()->SetTitle("Invariant mass");
-  hDiffMass->GetYaxis()->SetTitle("Occurrences");
+  hDiffMass->GetYaxis()->SetTitle("Entries");
   hDiffMass->SetLineColor(kAzure - 2);
   hDiffMass->SetFillColor(kAzure - 2);
   hDiffMass->Draw();
 
   TF1* diffMassDistr = new TF1("diffMassDistr", "gaus(0)", 0., 8.);
   hDiffMass->Fit(diffMassDistr);
+
+  std::cout << "\nK* discordant invariant mass fit: y = A*exp(-0.5*((x-M)/D)**2)\n";
+  std::cout << "Parameter A: " << diffMassDistr->GetParameter(0) << " ± " << diffMassDistr->GetParError(0) << "\n";
+  std::cout << "Parameter M: " << diffMassDistr->GetParameter(1) << " ± " << diffMassDistr->GetParError(1) << "\n";
+  std::cout << "Parameter D: " << diffMassDistr->GetParameter(2) << " ± " << diffMassDistr->GetParError(2) << "\n";
+  std::cout << "Reduced Chi Square: " << diffMassDistr->GetChisquare() / diffMassDistr->GetNDF() << "\n";
+  std::cout << "Chi Square Probability: " << diffMassDistr->GetProb() << "\n\n";
 
   // Difference PiK
   TH1F* hDiffMassPiK = new TH1F(*hInvariantMassDiscordantPiK);
@@ -226,13 +234,22 @@ void Analysis()
   Figure2->cd(3);
   hDiffMassPiK->SetTitle("#pi - k invariant masses");
   hDiffMassPiK->GetXaxis()->SetTitle("Invariant mass");
-  hDiffMassPiK->GetYaxis()->SetTitle("Occurrences");
+  hDiffMassPiK->GetYaxis()->SetTitle("Entries");
   hDiffMassPiK->SetLineColor(kAzure - 2);
   hDiffMassPiK->SetFillColor(kAzure - 2);
   hDiffMassPiK->Draw();
 
   TF1* diffMassPiKDistr = new TF1("diffMassPiKDistr", "gaus(0)", 0., 8.);
   hDiffMassPiK->Fit(diffMassPiKDistr);
+
+
+  std::cout << "\nK* discordant PiK invariant mass fit: y = A*exp(-0.5*((x-M)/D)**2)\n";
+  std::cout << "Parameter A: " << diffMassPiKDistr->GetParameter(0) << " ± " << diffMassPiKDistr->GetParError(0) << "\n";
+  std::cout << "Parameter M: " << diffMassPiKDistr->GetParameter(1) << " ± " << diffMassPiKDistr->GetParError(1) << "\n";
+  std::cout << "Parameter D: " << diffMassPiKDistr->GetParameter(2) << " ± " << diffMassPiKDistr->GetParError(2) << "\n";
+  std::cout << "Reduced Chi Square: " << diffMassPiKDistr->GetChisquare() / diffMassPiKDistr->GetNDF() << "\n";
+  std::cout << "Chi Square Probability: " << diffMassPiKDistr->GetProb() << "\n\n";
+
 
   //   hParticleTypes
   //   hPhi
