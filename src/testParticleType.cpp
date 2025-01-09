@@ -1,10 +1,10 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "ParticleType.hpp"
 #include "ResonanceType.hpp"
-
 #include "doctest.h"
 #include <cstring> //for strcmp()
 #include <iostream>
+
 TEST_CASE("Testing ParticleType")
 {
   SUBCASE("Testing Getter methods")

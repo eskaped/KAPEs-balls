@@ -23,7 +23,6 @@ double ResonanceType::GetWidth() const
   return fWidth;
 }
 
-
 void ResonanceType::Print() const
 {
   ParticleType::Print();

@@ -1,7 +1,7 @@
 #include "Particle.hpp"
 #include <cmath>
 #include <cstdlib> //for RAND_MAX
-#include <cstring> //strcmp
+#include <cstring> //for strcmp
 #include <iostream>
 #include <stdexcept>
 
@@ -28,21 +28,16 @@ Particle::Particle(const char* name, double px, double py, double pz)
 
 int Particle::Decay2body(Particle& dau1, Particle& dau2) const
 {
-  if (GetMass() == 0.0)
-   {
+  if (GetMass() == 0.0) {
     printf("Decayment cannot be preformed if mass is zero\n");
     return 1;
   }
-
 
   double massMot  = GetMass();
   double massDau1 = dau1.GetMass();
   double massDau2 = dau2.GetMass();
 
-
   if (fIndex > -1) { // add width effect
-
-
 
     // gaussian random numbers
 
@@ -59,29 +54,13 @@ int Particle::Decay2body(Particle& dau1, Particle& dau2) const
     y1 = x1 * w;
 
     massMot += fParticleType[fIndex]->GetWidth() * y1;
-
-  //   std::cout<<"x1: "<<x1<<"\n";
-  //   std::cout<<"x2: "<<x2<<"\n";
-  //   std::cout<<"w: "<<w<<"\n";
-  //   std::cout<<"y1: "<<y1<<"\n";
-  //   std::cout<<"width: "<<fParticleType[fIndex]->GetWidth()<<'\n';
-  // 
   }
 
-
-
   if (massMot < massDau1 + massDau2) {
-    // std::cout<<"massMot: "<<massMot<<'\n';
-    // std::cout<<"massDau1: "<<massDau1<<'\n';
-    // std::cout<<"massDau2: "<<massDau2<<'\n';
-
     printf("Decayment cannot be preformed because mass is too low in this "
            "channel\n");
     return 2;
   }
-
-
-
 
   double pout =
       sqrt(
@@ -104,12 +83,8 @@ int Particle::Decay2body(Particle& dau1, Particle& dau2) const
   double by = fPy / energy;
   double bz = fPz / energy;
 
-
-
   dau1.Boost(bx, by, bz);
   dau2.Boost(bx, by, bz);
-
-  
 
   return 0;
 }
@@ -165,6 +140,13 @@ double Particle::GetMass() const
 {
   return fParticleType[fIndex]->GetMass();
 }
+
+double Particle::GetEnergy() const
+{
+  double m{fParticleType[fIndex]->GetMass()};
+  return std::sqrt(m * m + fPx * fPx + fPy * fPy + fPz * fPz);
+}
+
 double Particle::GetCharge() const
 {
   return fParticleType[fIndex]->GetCharge();
@@ -178,12 +160,6 @@ void Particle::SetIndex(int index)
   }
 
   fIndex = index;
-}
-
-double Particle::GetEnergy() const
-{
-  double m{fParticleType[fIndex]->GetMass()};
-  return std::sqrt(m * m + fPx * fPx + fPy * fPy + fPz * fPz);
 }
 
 void Particle::SetIndex(const char* name)

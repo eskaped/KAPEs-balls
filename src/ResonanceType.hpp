@@ -1,6 +1,7 @@
 #ifndef RESONANCE_TYPE_HPP
 #define RESONANCE_TYPE_HPP
 #include "ParticleType.hpp"
+
 namespace kape {
 class ResonanceType : public ParticleType
 {

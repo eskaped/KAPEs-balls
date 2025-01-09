@@ -3,8 +3,8 @@
 
 #include "ParticleType.hpp"
 #include "ResonanceType.hpp"
-
 #include <vector>
+
 namespace kape {
 class Particle
 {
@@ -14,7 +14,8 @@ class Particle
                               double width = 0);
   static void PrintParticleType();
 
-  Particle(const char* name=DEFAULT_NAME, double px = 0., double py = 0., double pz = 0.);
+  Particle(const char* name = DEFAULT_NAME, double px = 0., double py = 0.,
+           double pz = 0.);
   int Decay2body(Particle& dau1, Particle& dau2) const;
   int GetIndex() const;
   double GetPx() const;
@@ -33,6 +34,8 @@ class Particle
  private:
   static inline const char* DEFAULT_NAME{"DEFAULT_NAME"};
   static inline std::vector<ParticleType*> fParticleType{};
+  //returns the index of the first particle type named "name"
+  //if not found it returns the number of particle types
   static int FindParticle(const char* name);
   void Boost(double bx, double by, double bz);
 

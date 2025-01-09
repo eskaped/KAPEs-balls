@@ -1,12 +1,4 @@
 TO-DO: 
     - NOTA: è normale che la massa invariante abbia un val minimo sotto il quale non va (quando P=0)
     - normalizzare figure2 (mail jacazio)
-    - aggiungere figure2
-    - grandezza figura
-    - colori tabelle (
-        dark:   #3366FF
-        mid:    #9FB8DA 
-        light:  #C4D4CE)
-    - rileggere tutto
-    - sistemare codice
     - mettere tutto il codice

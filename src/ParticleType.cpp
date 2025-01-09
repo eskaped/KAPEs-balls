@@ -1,6 +1,7 @@
 #include "ParticleType.hpp"
 #include <iostream>
 #include <stdexcept>
+
 namespace kape {
 ParticleType::ParticleType(const char* name, double mass, int charge)
     : fName{name}
